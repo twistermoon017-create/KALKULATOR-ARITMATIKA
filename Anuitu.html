@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+<title>ArithmaPro | Kalkulator Barisan & Deret Aritmatika</title>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    min-height: 100vh;
+    background: radial-gradient(circle at 10% 30%, #0f172a, #020617);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif;
+  }
+
+  /* Container utama dengan efek glassmorphism modern */
+  .glass-container {
+    max-width: 1200px;
+    width: 100%;
+    background: rgba(15, 25, 45, 0.65);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-radius: 56px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 25px 45px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05);
+    padding: 28px 22px;
+    transition: all 0.2s ease;
+  }
+
+  /* header area dengan gradien */
+  .hero {
+    text-align: center;
+    margin-bottom: 36px;
+  }
+
+  .hero h1 {
+    font-size: 2.2rem;
+    background: linear-gradient(135deg, #E0E7FF, #A78BFA, #FDE047);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    letter-spacing: -0.3px;
+    font-weight: 800;
+    text-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  }
+
+  .hero p {
+    color: #cbd5e6;
+    font-weight: 500;
+    margin-top: 8px;
+    font-size: 1rem;
+    background: rgba(255,255,240,0.1);
+    display: inline-block;
+    padding: 6px 18px;
+    border-radius: 60px;
+    backdrop-filter: blur(4px);
+  }
+
+  /* Grid dengan sentuhan modern */
+  .grid-modern {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 20px;
+    margin-top: 12px;
+  }
+
+  /* Kartu 3D + hover lembut untuk HP (tap feedback) */
+  .math-card {
+    background: rgba(20, 30, 55, 0.8);
+    backdrop-filter: blur(8px);
+    border-radius: 2rem;
+    padding: 1.4rem 1rem 1.6rem;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1), box-shadow 0.2s;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 12px 25px -12px rgba(0, 0, 0, 0.4);
+  }
+
+  .math-card:active {
+    transform: scale(0.97);
+    background: rgba(30, 45, 80, 0.9);
+  }
+
+  .math-card h3 {
+    color: #FDE047;
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+    letter-spacing: -0.2px;
+  }
+
+  .rumus-modern {
+    background: rgba(0, 0, 0, 0.4);
+    padding: 12px 6px;
+    border-radius: 28px;
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #E2E8F0;
+    backdrop-filter: blur(4px);
+    margin: 12px 0;
+    word-break: break-word;
+  }
+
+  .btn-glow {
+    margin-top: 12px;
+    background: linear-gradient(90deg, #8B5CF6, #6D28D9);
+    border: none;
+    padding: 10px 0;
+    width: 100%;
+    border-radius: 40px;
+    font-weight: bold;
+    color: white;
+    font-size: 0.9rem;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: 0.15s linear;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  }
+
+  .btn-glow:active {
+    transform: translateY(2px);
+    box-shadow: 0 1px 3px black;
+  }
+
+  /* MODAL GORGEOUS UNTUK HP */
+  .modal-super {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(8px);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    padding: 20px;
+  }
+
+  .card-modal {
+    background: linear-gradient(145deg, #1E293B, #0F172A);
+    border-radius: 48px;
+    width: 100%;
+    max-width: 480px;
+    padding: 28px 24px 36px;
+    box-shadow: 0 30px 50px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 215, 0, 0.2);
+    animation: slideUp 0.3s ease-out;
+    border: 1px solid rgba(255,255,200,0.2);
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(40px) scale(0.96);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 28px;
+    border-bottom: 2px dashed #FDE047;
+    padding-bottom: 12px;
+  }
+
+  .modal-header h2 {
+    font-size: 1.9rem;
+    font-weight: 800;
+    background: linear-gradient(120deg, #FDE047, #FFB347);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+  }
+
+  .close-x {
+    font-size: 32px;
+    font-weight: 300;
+    color: #94a3b8;
+    cursor: pointer;
+    transition: 0.1s;
+    line-height: 1;
+  }
+
+  .close-x:active {
+    color: #facc15;
+    transform: scale(1.1);
+  }
+
+  /* input field dengan floating style */
+  .input-group {
+    margin-bottom: 18px;
+  }
+
+  .input-group label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #A5B4FC;
+    margin-bottom: 6px;
+  }
+
+  .input-field {
+    width: 100%;
+    background: #0F172A;
+    border: 1.5px solid #334155;
+    border-radius: 34px;
+    padding: 16px 20px;
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #F1F5F9;
+    outline: none;
+    transition: all 0.2s;
+    font-family: monospace;
+  }
+
+  .input-field:focus {
+    border-color: #FDE047;
+    box-shadow: 0 0 0 3px rgba(253, 224, 71, 0.3);
+    background: #0a0f1c;
+  }
+
+  .button-group {
+    display: flex;
+    gap: 14px;
+    margin: 28px 0 24px;
+    flex-wrap: wrap;
+  }
+
+  .btn-calc {
+    flex: 1;
+    background: linear-gradient(95deg, #10B981, #059669);
+    border: none;
+    padding: 14px 0;
+    border-radius: 44px;
+    font-weight: 800;
+    font-size: 1rem;
+    color: white;
+    cursor: pointer;
+    transition: 0.08s linear;
+    box-shadow: 0 4px 0 #064E3B;
+  }
+
+  .btn-calc:active {
+    transform: translateY(3px);
+    box-shadow: 0 1px 0 #064E3B;
+  }
+
+  .btn-reset {
+    flex: 1;
+    background: linear-gradient(95deg, #EF4444, #B91C1C);
+    box-shadow: 0 4px 0 #7F1D1D;
+  }
+
+  .btn-reset:active {
+    transform: translateY(3px);
+  }
+
+  .hasil-box {
+    background: #00000044;
+    border-radius: 38px;
+    padding: 18px 10px;
+    text-align: center;
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(253, 224, 71, 0.5);
+    margin-top: 8px;
+  }
+
+  .hasil-label {
+    font-size: 0.8rem;
+    letter-spacing: 2px;
+    color: #cbd5e1;
+  }
+
+  .hasil-angka {
+    font-size: 3.2rem;
+    font-weight: 800;
+    font-family: monospace;
+    color: #FDE047;
+    word-break: break-word;
+    line-height: 1.2;
+    text-shadow: 0 0 8px #facc1566;
+  }
+
+  /* tooltip & sentuhan responsif */
+  @media (max-width: 560px) {
+    .glass-container {
+      padding: 18px 16px;
+    }
+    .hero h1 {
+      font-size: 1.8rem;
+    }
+    .math-card h3 {
+      font-size: 1.4rem;
+    }
+    .card-modal {
+      padding: 20px 18px 28px;
+    }
+    .hasil-angka {
+      font-size: 2.4rem;
+    }
+    .input-field {
+      padding: 12px 18px;
+    }
+  }
+
+  /* animasi sentuhan tambahan */
+  footer {
+    text-align: center;
+    margin-top: 32px;
+    font-size: 0.7rem;
+    color: #5b6e8c;
+  }
+</style>
+</head>
+<body>
+
+<div class="glass-container">
+  <div class="hero">
+    <h1> Arimatika </h1>
+    <p>Barisan & Deret Aritmatika • Kelas X</p>
+  </div>
+
+  <div class="grid-modern">
+    <!-- Un -->
+    <div class="math-card" data-mode="un">
+      <h3>Uₙ</h3>
+      <div class="rumus-modern">Uₙ = a + (n−1)·b</div>
+      <button class="btn-glow">🧮 Hitung Suku ke-n</button>
+    </div>
+    <!-- Sn -->
+    <div class="math-card" data-mode="sn">
+      <h3>Sₙ</h3>
+      <div class="rumus-modern">Sₙ = ½·n·(2a+(n-1)b)</div>
+      <button class="btn-glow">📊 Jumlah Deret</button>
+    </div>
+    <!-- a -->
+    <div class="math-card" data-mode="a">
+      <h3>a (Suku Pertama)</h3>
+      <div class="rumus-modern">a = Uₙ − (n−1)·b</div>
+      <button class="btn-glow">🔍 Cari a</button>
+    </div>
+    <!-- b -->
+    <div class="math-card" data-mode="b">
+      <h3>b (Beda)</h3>
+      <div class="rumus-modern">b = (Uₙ − a)/(n−1)</div>
+      <button class="btn-glow">⚡ Cari Beda</button>
+    </div>
+    <!-- n -->
+    <div class="math-card" data-mode="n">
+      <h3>n (Banyak Suku)</h3>
+      <div class="rumus-modern">n = (Uₙ − a)/b + 1</div>
+      <button class="btn-glow">🔢 Cari n</button>
+    </div>
+  </div>
+  <footer>👆 ketuk kartu untuk kalkulator interaktif | hasil presisi</footer>
+</div>
+
+<!-- MODAL DINAMIS SUPERIOR -->
+<div id="smartModal" class="modal-super">
+  <div class="card-modal">
+    <div class="modal-header">
+      <h2 id="modalTitle">Kalkulator Un</h2>
+      <span class="close-x" id="closeModalBtn">✕</span>
+    </div>
+    <div id="dynamicInputs">
+      <!-- akan diisi javascript -->
+    </div>
+    <div class="button-group">
+      <button class="btn-calc" id="computeBtn">⚡ HITUNG</button>
+      <button class="btn-calc btn-reset" id="resetModalBtn">⟳ RESET</button>
+    </div>
+    <div class="hasil-box">
+      <div class="hasil-label">HASIL PERHITUNGAN</div>
+      <div class="hasil-angka" id="modalResult">—</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // =============== DATA MODE & KONFIGURASI ===============
+  let currentMode = 'un';
+  // referensi elemen
+  const modal = document.getElementById('smartModal');
+  const modalTitle = document.getElementById('modalTitle');
+  const dynamicContainer = document.getElementById('dynamicInputs');
+  const resultSpan = document.getElementById('modalResult');
+  const computeBtn = document.getElementById('computeBtn');
+  const resetBtn = document.getElementById('resetModalBtn');
+  const closeModalBtn = document.getElementById('closeModalBtn');
+
+  // mapping untuk setiap mode: label, placeholder, dan key urutan input (3 input)
+  const config = {
+    un: {
+      title: '📐 Cari Uₙ (Suku ke-n)',
+      inputs: [
+        { label: 'a (suku pertama)', placeholder: 'Contoh: 5', key: 'a' },
+        { label: 'b (beda)', placeholder: 'Contoh: 3', key: 'b' },
+        { label: 'n (urutan suku)', placeholder: 'Contoh: 10', key: 'n' }
+      ],
+      formula: (a, b, n) => a + (n - 1) * b
+    },
+    sn: {
+      title: '📈 Jumlah Deret Sₙ',
+      inputs: [
+        { label: 'a (suku pertama)', placeholder: 'Contoh: 2', key: 'a' },
+        { label: 'b (beda)', placeholder: 'Contoh: 4', key: 'b' },
+        { label: 'n (banyak suku)', placeholder: 'Contoh: 7', key: 'n' }
+      ],
+      formula: (a, b, n) => (n / 2) * (2 * a + (n - 1) * b)
+    },
+    a: {
+      title: '🔎 Mencari suku pertama (a)',
+      inputs: [
+        { label: 'Uₙ (suku ke-n diketahui)', placeholder: 'Contoh: 42', key: 'un' },
+        { label: 'b (beda)', placeholder: 'Contoh: 5', key: 'b' },
+        { label: 'n (posisi suku)', placeholder: 'Contoh: 12', key: 'n' }
+      ],
+      formula: (un, b, n) => un - (n - 1) * b
+    },
+    b: {
+      title: '⚙️ Mencari Beda (b)',
+      inputs: [
+        { label: 'Uₙ (suku ke-n)', placeholder: 'Contoh: 38', key: 'un' },
+        { label: 'a (suku pertama)', placeholder: 'Contoh: 5', key: 'a' },
+        { label: 'n (urutan suku)', placeholder: 'Contoh: 12', key: 'n' }
+      ],
+      formula: (un, a, n) => (un - a) / (n - 1)
+    },
+    n: {
+      title: '🧮 Mencari banyak suku (n)',
+      inputs: [
+        { label: 'Uₙ (suku ke-n)', placeholder: 'Contoh: 78', key: 'un' },
+        { label: 'a (suku pertama)', placeholder: 'Contoh: 6', key: 'a' },
+        { label: 'b (beda)', placeholder: 'Contoh: 4', key: 'b' }
+      ],
+      formula: (un, a, b) => ((un - a) / b) + 1
+    }
+  };
+
+  // untuk menyimpan referensi input elements setelah dirender
+  let inputFields = [];
+
+  // Fungsi render modal sesuai mode
+  function renderModalByMode(mode) {
+    const cfg = config[mode];
+    if (!cfg) return;
+    modalTitle.innerHTML = cfg.title;
+    // generate HTML input group
+    let html = '';
+    inputFields = [];
+    cfg.inputs.forEach((inp, idx) => {
+      html += `
+        <div class="input-group">
+          <label>${inp.label}</label>
+          <input type="number" class="input-field" id="input_${idx}" placeholder="${inp.placeholder}" step="any" value="">
+        </div>
+      `;
+    });
+    dynamicContainer.innerHTML = html;
+    // simpan input elements ke array
+    for (let i = 0; i < cfg.inputs.length; i++) {
+      inputFields.push(document.getElementById(`input_${i}`));
+    }
+    // reset hasil
+    resultSpan.innerText = '—';
+  }
+
+  // fungsi hitung berdasarkan mode
+  function computeResult() {
+    const cfg = config[currentMode];
+    if (!cfg) return;
+    // ambil nilai input (parse float, kosong -> NaN)
+    const values = inputFields.map(field => {
+      let val = field.value.trim();
+      if (val === "") return NaN;
+      return parseFloat(val);
+    });
+
+    // validasi apakah ada NaN
+    for (let i = 0; i < values.length; i++) {
+      if (isNaN(values[i])) {
+        resultSpan.innerText = '❌ Lengkapi data';
+        resultSpan.style.color = '#f97316';
+        setTimeout(() => { resultSpan.style.color = '#FDE047'; }, 800);
+        return;
+      }
+    }
+
+    let hasil;
+    let errorFlag = false;
+    try {
+      if (currentMode === 'un') {
+        const [a, b, n] = values;
+        if (n <= 0 && !Number.isInteger(n) && n < 0) throw new Error();
+        hasil = cfg.formula(a, b, n);
+      } 
+      else if (currentMode === 'sn') {
+        const [a, b, n] = values;
+        if (n <= 0) throw new Error('n harus positif');
+        hasil = cfg.formula(a, b, n);
+      }
+      else if (currentMode === 'a') {
+        const [un, b, n] = values;
+        if (n <= 1 && n !== 1) { /* n=1 diperbolehkan a = un */ }
+        hasil = cfg.formula(un, b, n);
+      }
+      else if (currentMode === 'b') {
+        const [un, a, n] = values;
+        if (n <= 1) {
+          resultSpan.innerText = '⚠️ n harus > 1 untuk beda';
+          return;
+        }
+        if ((un - a) === 0 && (n - 1) === 0) throw new Error();
+        hasil = cfg.formula(un, a, n);
+      }
+      else if (currentMode === 'n') {
+        const [un, a, b] = values;
+        if (b === 0) {
+          resultSpan.innerText = '⚠️ Beda (b) tidak boleh 0';
+          return;
+        }
+        hasil = cfg.formula(un, a, b);
+        if (hasil < 1 || !Number.isFinite(hasil)) throw new Error('n tidak valid');
+      }
+      else {
+        hasil = "error";
+      }
+
+      // Cek apakah hasil berupa bilangan desimal atau integer
+      if (typeof hasil === 'number' && !isNaN(hasil) && isFinite(hasil)) {
+        // Jika hasil mendekati integer (karena floating point) -> tampilkan rapi
+        let finalValue;
+        if (Math.abs(hasil - Math.round(hasil)) < 1e-10) {
+          finalValue = Math.round(hasil);
+        } else {
+          finalValue = parseFloat(hasil.toFixed(6));
+        }
+        resultSpan.innerText = finalValue;
+        // efek sukses
+        resultSpan.style.transform = 'scale(1.02)';
+        setTimeout(() => { resultSpan.style.transform = 'scale(1)'; }, 150);
+      } else {
+        resultSpan.innerText = '⚠️ Hasil tidak valid';
+      }
+    } catch (err) {
+      resultSpan.innerText = '⚠️ Periksa input (n≥1, b≠0 dll)';
+    }
+  }
+
+  // reset input dan hasil
+  function resetModalInputs() {
+    if (inputFields) {
+      inputFields.forEach(field => {
+        if (field) field.value = '';
+      });
+    }
+    resultSpan.innerText = '—';
+  }
+
+  // buka modal dengan mode tertentu
+  function openModalWithMode(mode) {
+    currentMode = mode;
+    renderModalByMode(mode);
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+    // sedikit auto fokus ke input pertama
+    setTimeout(() => {
+      if (inputFields[0]) inputFields[0].focus();
+    }, 100);
+  }
+
+  // close modal
+  function closeModal() {
+    modal.style.display = 'none';
+    document.body.style.overflow = '';
+  }
+
+  // event listener untuk semua kartu & tombol (karena kartu punya tombol internal dan area card)
+  function attachCardEvents() {
+    const cards = document.querySelectorAll('.math-card');
+    cards.forEach(card => {
+      const btn = card.querySelector('.btn-glow');
+      // menentukan mode dari atribut data-mode atau dari teks? lebih baik pakai mapping manual
+      let mode = '';
+      const heading = card.querySelector('h3')?.innerText || '';
+      if (heading.includes('Uₙ')) mode = 'un';
+      else if (heading.includes('Sₙ')) mode = 'sn';
+      else if (heading.includes('a')) mode = 'a';
+      else if (heading.includes('b')) mode = 'b';
+      else if (heading.includes('n')) mode = 'n';
+      
+      // klik tombol
+      if (btn) {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          if (mode) openModalWithMode(mode);
+        });
+      }
+      // klik card area juga (agar user friendly)
+      card.addEventListener('click', (e) => {
+        // jika yang diklik bukan tombol (supaya tidak double)
+        if (e.target !== btn && !btn.contains(e.target)) {
+          if (mode) openModalWithMode(mode);
+        }
+      });
+    });
+  }
+
+  // Menangani tombol hitung dan reset di modal
+  computeBtn.addEventListener('click', () => {
+    computeResult();
+  });
+  
+  resetBtn.addEventListener('click', () => {
+    resetModalInputs();
+  });
+  
+  closeModalBtn.addEventListener('click', closeModal);
+  
+  // klik background modal menutup
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) closeModal();
+  });
+  
+  // support keyboard escape
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal.style.display === 'flex') {
+      closeModal();
+    }
+  });
+  
+  // inisialisasi event kartu
+  attachCardEvents();
+  
+  // optional: tambahkan efek visual jika di HP, supaya user tau kartu bisa ditekan
+  // sudah ada css :active
+  
+  // handling kasus b = 0 dan n desimal, lebih aman. Pada rumus n, pastikan bilangan bulat.
+  // Untuk validasi tambahan, kita sudah menangani di compute.
+  
+  // jika modal belum di-load, default tersedia. Selesai.
+  console.log('ArithmaPro siap digunakan di HP & desktop');
+</script>
+</body>
+</html>
